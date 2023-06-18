@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+
+  <rosparam command="load" file="$(find TFG_robot_demo_config)/config/joint_names.yaml"/>
+    
+  <arg name="moveit_controller_manager" default="ur5e" />
+  <include file="$(find TFG_robot_demo_config)/launch/$(arg moveit_controller_manager)_moveit_controller_manager.launch.xml" />
+
+  <include file="$(find TFG_robot_demo_config)/launch/planning_context.launch" >
+    <arg name="load_robot_description" value="true" />
+  </include>
+  
+  <arg name="use_gui" default="false" />
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="/use_gui" value="false"/>
+    <rosparam param="/source_list">[move_group/joint_states]</rosparam>
+  </node>
+
+  <include file="$(find TFG_robot_demo_config)/launch/move_group.launch">
+    <arg name="publish_monitored_planning_scene" value="true" />
+    <arg name="allow_trajectory_execution" value="true"/>
+    <arg name="moveit_controller_manager" value="ur5e" />
+    <arg name="fake_execution_type" value="interpolate"/>
+    <arg name="info" value="true"/>
+    <arg name="debug" value="false"/>
+    <arg name="pipeline" value="ompl"/>
+    <arg name="load_robot_description" value="true"/>
+  </include>
+
+  <include file="$(find TFG_robot_demo_config)/launch/moveit_rviz.launch">
+  <arg name="rviz_config" value="true"/>
+  </include>
+
+</launch>
